@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import json
+import json,urllib2
 from .logutil import LogUtil
 from datetime import date,time,datetime
 from sqlobject import *
@@ -219,6 +219,8 @@ class Database:
     self.models={}
     self.logPath=logPath
     self.logger=LogUtil.getLogger(self.logPath,'sqlobj.Database')
+  def close(self):
+    sqlhub.processConnection.close()
   def resourceFromSchema(self,resource):
     if isinstance(resource,(list,tuple)):
       for rsc in resource:
@@ -286,11 +288,16 @@ class Database:
     if 'indexes' in schema:
       prop.update(self._jsonIndexes(schema['indexes']))
     return prop
-  def resourceFromJSON(self,path,createTable=False,dropTable=False):
-    f=open(path,'r')
-    raw=f.read().replace('\r','').replace('\n','').replace('\t','').replace('\'','"')
-    f.close()
-    data=json.loads(raw)
+  def resourceFromJSON(self,path=None,url=None,createTable=False,dropTable=False):
+    if (not path and not url) or (path and url):
+      raise Exception('Invalid path or JSON schema')
+    elif path:
+      f=open(path,'r')
+      raw=f.read()
+      f.close()
+    elif url:
+      raw=urllib2.urlopen(url).read()
+    data=json.loads(raw.replace('\r','').replace('\n','').replace('\t','').replace('\'','"'))
     self.schemaClass=[]
     for schema in data:
       prop=self._jsonProperty(schema)
