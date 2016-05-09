@@ -10,7 +10,7 @@ requires=[
   'sqlobject'
 ]
 setup(name='sqlobj',
-  version='0.2.10',
+  version='0.3.0',
   author='iinitz',
   author_email='hanamiza555@gmail.com',
   description='',

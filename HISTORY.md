@@ -1,4 +1,4 @@
-﻿0.2.10
+﻿0.3.0
 - Add import schema from url
 - Add close method to disconnect db
 
